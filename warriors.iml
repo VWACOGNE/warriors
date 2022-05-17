@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java/armes" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java/potions" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java/sorts" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java/Cases de jeux" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java/Ennemis" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java/Héros" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java/lib" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="mysql-connector-java-8.0.29" level="project" />
+  </component>
+</module>
