@@ -1,6 +1,6 @@
 import heros.Personnage;
 
-public class CasePotion {
+public class CasePotion implements Case{
 
     private int potionDeVie = 2;
     private int megaPotionDeVie = 5;
@@ -8,13 +8,13 @@ public class CasePotion {
     public void casePotion(Personnage player, Plateau.Cases type) {
 
         if (type == Plateau.Cases.PETITE_POTION) {
-            potion(player, getPotionDeVie());
+            action(player, getPotionDeVie());
         } else if (type == Plateau.Cases.GRANDE_POTION) {
-            potion(player, getMegaPotionDeVie());
+            action(player, getMegaPotionDeVie());
         }
     }
 
-    static void potion(Personnage player, int potion) {
+    public void action(Personnage player, int potion) {
 
             if ((player.getVieGuerrier() + potion) >= player.getvMaxGuerrier()) {
                 player.setVieGuerrier(player.getvMaxGuerrier());
