@@ -9,6 +9,11 @@ public class Personnage {
     private int fMaxGuerrier;
 
 
+
+
+    private int idHeros;
+
+
     /**
      * Methode pour afficher les parametres du personnage
      *
@@ -69,6 +74,14 @@ public class Personnage {
 
     public void setForceGuerrier(int forceGuerrier) {
         this.forceGuerrier = forceGuerrier;
+    }
+
+    public int getIdHeros() {
+        return idHeros;
+    }
+
+    public void setIdHeros(int idHeros) {
+        this.idHeros = idHeros;
     }
 
 

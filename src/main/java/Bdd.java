@@ -1,8 +1,10 @@
-import heros.Guerrier;
-import heros.Personnage;
 
+import heros.Personnage;
 import java.sql.*;
 import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+
 
 public class Bdd {
     private Connection connexion;
@@ -14,6 +16,7 @@ public class Bdd {
     loadDatabase();
 
         Personnage utilisateur = null;
+
         try {
             statement = connexion.createStatement();
 
@@ -26,6 +29,10 @@ public class Bdd {
             int vie = resultat.getInt("vie");
             int attaque = resultat.getInt("attaque");
             String type = resultat.getString("type");
+            int id = resultat.getInt("idHeros");
+
+
+
 
 
             try {
@@ -39,6 +46,9 @@ public class Bdd {
             utilisateur.setVieGuerrier(vie);
             utilisateur.setForceGuerrier(attaque);
             utilisateur.setType(type);
+            utilisateur.setIdHeros(id);
+
+
 
             utilisateurs.add(utilisateur);
         }
@@ -59,6 +69,79 @@ public class Bdd {
         return utilisateurs;
 }
 
+    /**
+     * Fonction permettant de récupérer le plateur de jeux
+     * @param id
+     * @return plateau
+     */
+    public String recupererTableau(int id) {
+        String plateau = null;
+        Statement statement = null;
+        ResultSet result = null;
+        loadDatabase();
+        try {
+            statement = connexion.createStatement();
+
+            PreparedStatement preparedStatement = connexion.prepareStatement("SELECT plateau FROM Heros where idHeros = ?;");
+            preparedStatement.setInt(1, id);
+            result = preparedStatement.executeQuery();
+            while (result.next()){
+                plateau = result.getString("plateau");
+            }
+        } catch (SQLException e) {
+        } finally {
+            // Close the connection
+            try {
+                if (result != null)
+                    result.close();
+                if (statement != null)
+                    statement.close();
+                if (connexion != null)
+                    connexion.close();
+            } catch (SQLException ignore) {
+            }
+        }
+        return plateau;
+    }
+
+    /**
+     * Fonction permettant de récupérer la position du joueur
+     * @param id
+     * @return position
+     */
+    public int recupererPosition(int id) {
+        int position = 0;
+        Statement statement = null;
+        ResultSet result = null;
+        loadDatabase();
+        try {
+            statement = connexion.createStatement();
+
+            PreparedStatement preparedStatement = connexion.prepareStatement("SELECT position FROM Heros where idHeros = ?;");
+            preparedStatement.setInt(1, id);
+            result = preparedStatement.executeQuery();
+            while (result.next()){
+                position = result.getInt("position");
+            }
+        } catch (SQLException e) {
+        } finally {
+            // Close the connection
+            try {
+                if (result != null)
+                    result.close();
+                if (statement != null)
+                    statement.close();
+                if (connexion != null)
+                    connexion.close();
+            } catch (SQLException ignore) {
+            }
+        }
+        return position;
+    }
+
+    /**
+     * fonction pour lancer la bdd
+     */
     private void loadDatabase() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -70,30 +153,46 @@ public class Bdd {
             e.printStackTrace();
         }
     }
-    public void ajouterUtilisateur(Personnage utilisateur) {
+
+    /**
+     * Fonciton pouir ajouter un joueur dans la bdd
+     * @param utilisateur
+     * @param plateau
+     */
+    public void ajouterUtilisateur(Personnage utilisateur, Plateau plateau) {
         loadDatabase();
 
         try {
-            PreparedStatement preparedStatement = connexion.prepareStatement("INSERT INTO Heros(name, vie, attaque, type, plateau) VALUES(?, ?, ?, ?, ?);");
+            PreparedStatement preparedStatement = connexion.prepareStatement("INSERT INTO Heros(name, vie, attaque, type, plateau,position ) VALUES(?, ?, ?, ?, ?, ?);");
             preparedStatement.setString(1, utilisateur.getNomGuerrier());
             preparedStatement.setInt(2, utilisateur.getVieGuerrier());
             preparedStatement.setInt(3, utilisateur.getForceGuerrier());
             preparedStatement.setString(4, utilisateur.getType());
-            preparedStatement.setString(5, null);
+            preparedStatement.setString(5, Arrays.toString(plateau.getTableau()));
+            preparedStatement.setInt(6,plateau.getPosition());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    public void ajouterTableau(Plateau.Cases[] tableau, Personnage player) {
+
+    /**
+     * Fonction pour mettre a jour l'utilisateur
+     * @param utilisateur
+     * @param plateau
+     * @param name
+     */
+    public void majUtilisateur(Personnage utilisateur, Plateau plateau, String name) {
         loadDatabase();
-        List<Plateau.Cases> list = Arrays.asList(tableau);
-        try {
-            PreparedStatement preparedStatement = connexion.prepareStatement("UPDATE Heros set plateau = ? WHERE name = ? ;");
-            preparedStatement.setString(1, String.valueOf(list));
 
-            preparedStatement.setString(2, player.getNomGuerrier());
+        try {
+            PreparedStatement preparedStatement = connexion.prepareStatement("Update Heros  SET vie = ?, attaque = ?, plateau = ? ,position = ? where name = ?");
+            preparedStatement.setInt(1, utilisateur.getVieGuerrier());
+            preparedStatement.setInt(2, utilisateur.getForceGuerrier());
+            preparedStatement.setString(3, Arrays.toString(plateau.getTableau()));
+            preparedStatement.setInt(4,plateau.getPosition());
+            preparedStatement.setString(5, name);
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -101,6 +200,10 @@ public class Bdd {
         }
     }
 
+    /**
+     * Fonciton pour supprimer un utilisateur
+     * @param utilisateur
+     */
     public void supprimerUtilisateur(Personnage utilisateur) {
         loadDatabase();
 

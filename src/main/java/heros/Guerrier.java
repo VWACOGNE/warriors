@@ -18,12 +18,17 @@ public class Guerrier extends Personnage {
         this.setForceGuerrier(force);
         this.setvMaxGuerrier(vMax);
         this.setfMaxGuerrier(fMax);
-        this.setType("Guerrier");
+//        this.setType("Guerrier");
 
     }
     public Guerrier(){
         this.setvMaxGuerrier(10);
         this.setfMaxGuerrier(10);
+    }
+
+    @Override
+    public String getType() {
+        return "Guerrier";
     }
 
 

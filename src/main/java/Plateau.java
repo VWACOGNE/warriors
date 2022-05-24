@@ -1,24 +1,53 @@
 import heros.Personnage;
 
-import java.util.*;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class Plateau {
 
+    private String tableauDuJoueurSauve = null;
+    private String tableauASauve = null;
     private static Cases[] tableau = {Cases.DRAGON, Cases.DRAGON, Cases.DRAGON, Cases.DRAGON, Cases.SORCIER, Cases.SORCIER, Cases.SORCIER, Cases.SORCIER, Cases.SORCIER, Cases.SORCIER, Cases.SORCIER, Cases.SORCIER, Cases.SORCIER, Cases.SORCIER, Cases.GOBELIN, Cases.GOBELIN, Cases.GOBELIN, Cases.GOBELIN, Cases.GOBELIN, Cases.GOBELIN, Cases.GOBELIN, Cases.GOBELIN, Cases.GOBELIN, Cases.GOBELIN, Cases.MASSUE, Cases.MASSUE, Cases.MASSUE, Cases.MASSUE, Cases.MASSUE, Cases.EPEE, Cases.EPEE, Cases.EPEE, Cases.EPEE, Cases.ECLAIR, Cases.ECLAIR, Cases.ECLAIR, Cases.ECLAIR, Cases.ECLAIR, Cases.BOULE_FEU, Cases.BOULE_FEU, Cases.PETITE_POTION, Cases.PETITE_POTION, Cases.PETITE_POTION, Cases.PETITE_POTION, Cases.PETITE_POTION, Cases.PETITE_POTION, Cases.GRANDE_POTION, Cases.GRANDE_POTION, Cases.VIDE, Cases.VIDE, Cases.VIDE, Cases.VIDE, Cases.VIDE, Cases.VIDE, Cases.VIDE, Cases.VIDE, Cases.VIDE, Cases.VIDE, Cases.VIDE, Cases.VIDE, Cases.VIDE, Cases.VIDE, Cases.VIDE, Cases.VIDE,};
     private int position = 0;
 
     enum Cases {
         VIDE, MASSUE, EPEE, ECLAIR, BOULE_FEU, PETITE_POTION, GRANDE_POTION, GOBELIN, SORCIER, DRAGON
     }
+    private int cheat[] = {5,2,3,2,1,6,5,3,4,1,2,5,3,5,3,5,2,1,3,1,2};
 
 
+    /**
+     * Assigne aux paramettres les valeurs
+     * @param bdd
+     * @param player
+     * @param id
+     */
     //Constructor
-    public Plateau(Bdd bdd, Personnage player) {
-        List<Cases> list = Arrays.asList(getTableau());
-        Collections.shuffle(list);
-        setTableau(list.toArray(tableau));
-        System.out.println(Arrays.toString(tableau));
-//        bdd.ajouterTableau(getTableau(), player);
+    public Plateau(Bdd bdd, Personnage player, Integer id) {
+        if (id == null) {
+            List<Cases> list = Arrays.asList(getTableau());
+            Collections.shuffle(list);
+            setTableau(list.toArray(tableau));
+            tableauASauve = Arrays.toString(tableau);
+            bdd.ajouterUtilisateur(player, this);
+        } else {
+            tableauDuJoueurSauve = bdd.recupererTableau(id);
+            tableauDuJoueurSauve = tableauDuJoueurSauve.replace("[", "");
+            tableauDuJoueurSauve = tableauDuJoueurSauve.replace("]", "");
+            List<String> strings = Arrays.asList(tableauDuJoueurSauve.split(", "));
+            position = bdd.recupererPosition(id);
+            System.out.println(strings);
+            System.out.println("Tu reprends sur la position : " + getPosition());
+            for (int i = 0; i < strings.size(); i++) {
+                tableau[i] = Cases.valueOf(strings.get(i));
+            }
+        }
+    }
+
+    public Plateau() {
+
     }
 
 
@@ -27,21 +56,14 @@ public class Plateau {
     /**
      * Méthode qui permet d'alimenter une variable qui servira a la navigation dans le tableau jeu
      */
-    public void avancementPlateau(Personnage player) {
+    public void avancementPlateau(Personnage player, Bdd bdd, Des de) {
         String debutLancement;
-//        String choixDuHeroe;
         while (getPosition() < 63) {
-            System.out.print("Taper la lettre l pour lancer le dé (stop pour quitter le jeu) :");
-            debutLancement = Menu.choixClavier("");
+            debutLancement = Menu.choixClavier("Taper la lettre l pour lancer le dé (stop pour quitter le jeu) :");
             try {
-            if (debutLancement.equals("l")) {
-
-                    int result = this.getPosition() + Menu.lancerD();
-//                if (result >= 63) {
-//                   setPosition(63);
-//                } else {
+                if (debutLancement.equals("l")) {
+                    int result = this.getPosition() + de.lancerD();
                     setPosition(result);
-//                }
                     System.out.println("__________Votre position est maintenant sur la case : " + (position + 1));
 
                     if (tableau[getPosition()] == Cases.DRAGON) {
@@ -56,22 +78,34 @@ public class Plateau {
                         imgGobelin();
                         veuxTuCombattre();
                     }
+
                     realisationDeLevenement(getPosition(), player);
                     tableau[getPosition()] = Cases.VIDE;
                     System.out.println("\nRappel de tes parametres :");
                     System.out.println(player);
-
                 } else if (debutLancement.equals("stop")) {
-                    System.exit(0);
-                }
+                    String veuxTuSauvegarder = Menu.choixClavier("Veux-tu sauvegarder ta partie ? (tape: o pour oui, n pour non)");
+                    while (!veuxTuSauvegarder.equals("o") && (!veuxTuSauvegarder.equals("n"))) {
+                        veuxTuSauvegarder = Menu.choixClavier("Veux-tu sauvegarder ta partie ? (tape: o pour oui, n pour non)");
+                    }
+                    if (veuxTuSauvegarder.equals("o")) {
+                        bdd.majUtilisateur(player, this, player.getNomGuerrier());
+                        System.exit(0);
+                    }
 
-            }catch(Exception e) {
+                }
+            } catch (Exception e) {
                 setPosition(63);
             }
-
         }
     }
 
+    /**
+     * Fonction pour réaliser l'évennement
+     * @param position
+     * @param player
+     * @throws Exception
+     */
     public void realisationDeLevenement(int position, Personnage player) throws Exception {
         if (tableau[position] == Cases.VIDE) {
             System.out.println("\n____________________Tu es sur une case vide");
@@ -105,11 +139,14 @@ public class Plateau {
             CaseEnnemi c = new CaseEnnemi(player, Cases.SORCIER, this);
         } else if (tableau[position] == Cases.DRAGON) {
             CaseEnnemi c = new CaseEnnemi(player, Cases.DRAGON, this);
-        } else{
+        } else {
             throw new Exception("error");
         }
     }
 
+    /**
+     * Fonction pour poser la question si l'on veut combattre ou non
+     */
     public void veuxTuCombattre() {
         String choixDuHeroe;
         choixDuHeroe = Menu.choixClavier("Veux-tu combattre ? (o pour oui n pour non)");
@@ -126,6 +163,9 @@ public class Plateau {
         }
     }
 
+    /**
+     * Img Gobelin
+     */
     public void imgGobelin() {
         System.out.println("____________________C'est un Gobelin              " +
                 "               ,      ,\n" +
@@ -141,6 +181,9 @@ public class Plateau {
                 "      /       '----'       \\");
     }
 
+    /**
+     * img sorcier
+     */
     public void imgSorcier() {
         System.out.println("____________________C'est un Sorcier                                        " +
                 "                                     .\n" +
@@ -160,6 +203,9 @@ public class Plateau {
                 "                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 
+    /**
+     * img dragon
+     */
     public void imgDragon() {
         System.out.println("____________________C'est un Dragon  " +
                 "       ,,\n" +
@@ -188,8 +234,6 @@ public class Plateau {
     }
 
 
-
-
     public int getPosition() {
         return position;
     }
@@ -206,5 +250,19 @@ public class Plateau {
         this.tableau = tableau;
     }
 
+    public String getTableauASauve() {
+        return tableauASauve;
+    }
 
+    public void setTableauASauve(String tableauASauve) {
+        this.tableauASauve = tableauASauve;
+    }
+
+    public String getTableauDuJoueurSauve() {
+        return tableauDuJoueurSauve;
+    }
+
+    public void setTableauDuJoueurSauve(String tableauDuJoueurSauve) {
+        this.tableauDuJoueurSauve = tableauDuJoueurSauve;
+    }
 }

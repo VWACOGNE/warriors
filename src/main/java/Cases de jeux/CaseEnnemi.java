@@ -2,6 +2,12 @@ import heros.Personnage;
 
 public class CaseEnnemi {
 
+    /**
+     * Assigne aux parametres les valeurs
+     * @param player
+     * @param type
+     * @param plateau
+     */
     public CaseEnnemi(Personnage player, Plateau.Cases type, Plateau plateau) {
         Ennemi ennemi = null;
         if (type == Plateau.Cases.GOBELIN) {
@@ -11,6 +17,18 @@ public class CaseEnnemi {
         } else if (type == Plateau.Cases.DRAGON) {
             ennemi = new Dragon();
         }
+        combat(ennemi, player, plateau);
+
+        imgVictoireCombat();
+    }
+
+    /**
+     * Fonction pour executer le combat
+     * @param ennemi
+     * @param player
+     * @param plateau
+     */
+    public void combat(Ennemi ennemi, Personnage player, Plateau plateau){
         while (ennemi.getPointDeVie()>0) {
             ennemi.setPointDeVie(ennemi.getPointDeVie() - player.getForceGuerrier());
             System.out.println("Sa vie : " + ennemi.getPointDeVie());
@@ -25,10 +43,11 @@ public class CaseEnnemi {
                 System.exit(0);
             }
         }
-        imgVictoireCombat();
     }
 
-
+    /**
+     * Affiche "Game Over"
+     */
     public void imgGameOver() {
         System.out.println(
                 "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n" +
@@ -45,6 +64,9 @@ public class CaseEnnemi {
                         "███▄▄▄███┼┼┼─▀█▀┼┼─┼██▄▄▄┼██┼┼┼┼┼██▄");
     }
 
+    /**
+     * Affiche "combat gagné"
+     */
     public void imgVictoireCombat() {
         System.out.println(" ██████╗ ██████╗ ███╗   ███╗██████╗  █████╗ ████████╗     ██████╗  █████╗  ██████╗ ███╗   ██╗███████╗\n" +
                 "██╔════╝██╔═══██╗████╗ ████║██╔══██╗██╔══██╗╚══██╔══╝    ██╔════╝ ██╔══██╗██╔════╝ ████╗  ██║██╔════╝\n" +

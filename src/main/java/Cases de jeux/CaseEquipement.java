@@ -1,6 +1,6 @@
 import heros.Personnage;
 
-public class CaseEquipement {
+public class CaseEquipement implements Case {
     private int massue = 3;
     private int epee = 5;
     private int eclair = 2;
@@ -10,20 +10,20 @@ public class CaseEquipement {
     public void caseEquipement(Personnage player, Plateau.Cases type) {
         if (player.getType().equals("Guerrier")) {
             if (type == Plateau.Cases.MASSUE) {
-                equipement(player, getMassue());
+                action(player, getMassue());
             } else if (type == Plateau.Cases.EPEE) {
-                equipement(player, getEpee());
+                action(player, getEpee());
             }
         } else {
             if (type == Plateau.Cases.ECLAIR) {
-                equipement(player, getEclair());
+                action(player, getEclair());
             } else if (type == Plateau.Cases.BOULE_FEU){
-                equipement(player, getBouleDeFeu());
+                action(player, getBouleDeFeu());
             }
         }
     }
 
-    static void equipement(Personnage player, int arme) {
+    public void action(Personnage player, int arme) {
         if ((player.getForceGuerrier() + arme) >= player.getfMaxGuerrier()) {
             player.setForceGuerrier(player.getfMaxGuerrier());
             System.out.println("tu as atteint la force max");

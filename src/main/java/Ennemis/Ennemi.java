@@ -22,4 +22,5 @@ public abstract class Ennemi {
     public void setPointAttaque(int pointAttaque) {
         this.pointAttaque = pointAttaque;
     }
+
 }

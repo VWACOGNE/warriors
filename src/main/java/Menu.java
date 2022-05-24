@@ -9,27 +9,49 @@ public class Menu {
 
 
     public static void main(String[] args) {
+        Plateau P = null;
         Bdd bdd = new Bdd();
         List<Personnage> listPersoSauve = bdd.recupererUtilisateurs();
-        Personnage player;
-        String sauvegarde = choixClavier("Veux-tu un personnage sauvegardé ? (o pour oui n pour non)");
+        Personnage player = null;
+        String cheat = choixClavier("Veux-tu une partie avec dés truqués ? (o pour oui n pour non)");
+        String sauvegarde = choixClavier("Veux-tu un personnage sauvegardé ? (o pour oui n pour non stop pour quitter)");
+        while (!sauvegarde.equals("o") && (!sauvegarde.equals("n"))) {
+            sauvegarde = choixClavier("Renseignes o pour oui ou n pour non ou stop pour quitter");
+        }
+        Des dice;
+        if (cheat.equals("o")) {
+            dice = new DesTruques();
+        } else {
+            dice = new DesNormaux();
+        }
         if (sauvegarde.equals("o")) {
             for (int i = 0; i < listPersoSauve.size(); i++) {
-                System.out.println(i);
+                System.out.println("Personnage N°" + i);
                 System.out.println(listPersoSauve.get(i));
             }
-            int choixList;
+            int choixList = -1;
             Scanner clavier = new Scanner(System.in);
-            System.out.print("quel perso veux-tu ? (donnes un numero)");
-            choixList = clavier.nextInt();
+            while (choixList > (listPersoSauve.size()-1) || choixList <0) {
+                try {
+                    System.out.print("----------Quel personnage veux-tu ? ");
+                    choixList = Integer.parseInt(clavier.next());
+                } catch (NumberFormatException exception) {
 
+                }
+            }
             player = listPersoSauve.get(choixList);
 
-        } else {
+            P = new Plateau(bdd, player, player.getIdHeros());
+            P.avancementPlateau(player, bdd, dice);
+
+        } else if (sauvegarde.equals("n")) {
             player = null;
             boolean nomChoisit = false;
             while (!nomChoisit) {
                 player = createHeroe(choixPersonnage());
+                if (listPersoSauve.isEmpty()) {
+                    break;
+                }
                 for (int i = 0; i < listPersoSauve.size(); i++) {
                     if (player.getNomGuerrier().equalsIgnoreCase(listPersoSauve.get(i).getNomGuerrier())) {
                         System.out.print("____________________Votre nom existe déjà, changez le\n");
@@ -40,14 +62,11 @@ public class Menu {
                     }
                 }
             }
-            bdd.ajouterUtilisateur(player);
-            System.out.print("____________________Votre personnage est sauvegardé");
-
+            System.out.print("____________________Votre personnage est sauvegardé\n");
+            P = new Plateau(bdd, player, null);
         }
         System.out.println(player);
-        Plateau P = new Plateau(bdd, player);
-//            System.out.print("____________________Votre position sur le plateau : case 1 \n");
-        P.avancementPlateau(player);
+        P.avancementPlateau(player, bdd, dice);
         bdd.supprimerUtilisateur(player);
         imgVictoire();
     }
@@ -113,6 +132,7 @@ public class Menu {
         Guerrier G = new Guerrier(nomGuerrier, 5, 5, 10, 10);
         return G;
     }
+
     /**
      * Fonction pour instancier un object de type heros.Magicien
      *
@@ -139,7 +159,6 @@ public class Menu {
         }
         return player;
     }
-
 
 
     /**
