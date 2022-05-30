@@ -10,8 +10,10 @@ public class Menu {
 
     public static void main(String[] args) throws Exception {
         Plateau P = null;
-        Bdd bdd = new Bdd();
-        List<Personnage> listPersoSauve = bdd.recupererUtilisateurs();
+        BddPersonnage bddPersonnage = new BddPersonnage();
+        BddPlateau bddPlateau = new BddPlateau();
+        BddPosition bddPosition = new BddPosition();
+        List<Personnage> listPersoSauve = bddPersonnage.recupererUtilisateurs();
         Personnage player = null;
         String cheat = choixClavier("Veux-tu une partie avec dés truqués ? (o pour oui n pour non)");
         String sauvegarde = choixClavier("Veux-tu un personnage sauvegardé ? (o pour oui n pour non stop pour quitter)");
@@ -41,8 +43,8 @@ public class Menu {
             }
             player = listPersoSauve.get(choixList);
 
-            P = new Plateau(bdd, player, player.getIdHeros());
-            P.avancementPlateau(player, bdd, dice);
+            P = new Plateau(bddPlateau, bddPersonnage, bddPosition, player, player.getIdHeros());
+            P.avancementPlateau(player, bddPersonnage, dice);
 
         } else if (sauvegarde.equals("n")) {
             player = null;
@@ -63,11 +65,11 @@ public class Menu {
                 }
             }
             System.out.print("____________________Votre personnage est sauvegardé\n");
-            P = new Plateau(bdd, player, null);
+            P = new Plateau(bddPlateau, bddPersonnage, bddPosition, player, null);
         }
         System.out.println(player);
-        P.avancementPlateau(player, bdd, dice);
-        bdd.supprimerUtilisateur(player);
+        P.avancementPlateau(player, bddPersonnage, dice);
+        bddPersonnage.supprimerUtilisateur(player);
         imgVictoire();
     }
 

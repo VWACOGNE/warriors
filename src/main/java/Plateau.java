@@ -20,24 +20,24 @@ public class Plateau {
 
     /**
      * Assigne aux paramettres les valeurs
-     * @param bdd
+     * @param
      * @param player
      * @param id
      */
     //Constructor
-    public Plateau(Bdd bdd, Personnage player, Integer id) {
+    public Plateau(BddPlateau bddPlateau,BddPersonnage bddPersonnage,BddPosition bddPosition, Personnage player, Integer id) {
         if (id == null) {
             List<Cases> list = Arrays.asList(getTableau());
             Collections.shuffle(list);
             setTableau(list.toArray(tableau));
             tableauASauve = Arrays.toString(tableau);
-            bdd.ajouterUtilisateur(player, this);
+            bddPersonnage.ajouterUtilisateur(player, this);
         } else {
-            tableauDuJoueurSauve = bdd.recupererTableau(id);
+            tableauDuJoueurSauve = bddPlateau.recupererTableau(id);
             tableauDuJoueurSauve = tableauDuJoueurSauve.replace("[", "");
             tableauDuJoueurSauve = tableauDuJoueurSauve.replace("]", "");
             List<String> strings = Arrays.asList(tableauDuJoueurSauve.split(", "));
-            position = bdd.recupererPosition(id);
+            position = bddPosition.recupererPosition(id);
             System.out.println(strings);
             System.out.println("Tu reprends sur la position : " + getPosition());
             for (int i = 0; i < strings.size(); i++) {
@@ -56,7 +56,7 @@ public class Plateau {
     /**
      * Méthode qui permet d'alimenter une variable qui servira a la navigation dans le tableau jeu
      */
-    public void avancementPlateau(Personnage player, Bdd bdd, Des de) throws Exception {
+    public void avancementPlateau(Personnage player, BddPersonnage bddPersonnage, Des de) throws Exception {
         String debutLancement;
         while (getPosition() < 63) {
             debutLancement = Menu.choixClavier("Taper la lettre l pour lancer le dé (stop pour quitter le jeu) :");
@@ -67,7 +67,7 @@ public class Plateau {
                     try {
                     setPosition(result);
                     }catch (DepassementPlateauException e) {
-                        System.out.println("je suis dans le catch");
+                        //System.out.println("je suis dans le catch");
                         break;
                     }
 
@@ -83,7 +83,7 @@ public class Plateau {
                         veuxTuSauvegarder = Menu.choixClavier("Veux-tu sauvegarder ta partie ? (tape: o pour oui, n pour non)");
                     }
                     if (veuxTuSauvegarder.equals("o")) {
-                        bdd.majUtilisateur(player, this, player.getNomGuerrier());
+                        bddPersonnage.majUtilisateur(player, this, player.getNomGuerrier());
                         System.exit(0);
                     }
 

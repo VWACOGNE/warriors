@@ -1,6 +1,6 @@
 import heros.Personnage;
 
-public class CaseGrandePotion extends CaseEquipement{
+public class CaseGrandePotion extends CaseEquipement {
     CaseGrandePotion(){
         setVie(5);
     }
