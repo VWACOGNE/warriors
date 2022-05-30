@@ -1,39 +1,38 @@
 import heros.Personnage;
 
 public class CaseEnnemi {
+    private int pointDeVie;
+    private int pointAttaque;
 
-    /**
-     * Assigne aux parametres les valeurs
-     * @param player
-     * @param type
-     * @param plateau
-     */
-    public CaseEnnemi(Personnage player, Plateau.Cases type, Plateau plateau) {
-        Ennemi ennemi = null;
-        if (type == Plateau.Cases.GOBELIN) {
-            ennemi = new Gobelin();
-        } else if (type == Plateau.Cases.SORCIER) {
-            ennemi = new Sorcier();
-        } else if (type == Plateau.Cases.DRAGON) {
-            ennemi = new Dragon();
-        }
-        combat(ennemi, player, plateau);
 
-        imgVictoireCombat();
+
+    public int getPointDeVie() {
+        return pointDeVie;
+    }
+
+    public void setPointDeVie(int pointDeVie) {
+        this.pointDeVie = pointDeVie;
+    }
+
+    public int getPointAttaque() {
+        return pointAttaque;
+    }
+
+    public void setPointAttaque(int pointAttaque) {
+        this.pointAttaque = pointAttaque;
     }
 
     /**
-     * Fonction pour executer le combat
-     * @param ennemi
+     * Méthode pour faire le combat
      * @param player
      * @param plateau
      */
-    public void combat(Ennemi ennemi, Personnage player, Plateau plateau){
-        while (ennemi.getPointDeVie()>0) {
-            ennemi.setPointDeVie(ennemi.getPointDeVie() - player.getForceGuerrier());
-            System.out.println("Sa vie : " + ennemi.getPointDeVie());
-            if (ennemi.getPointDeVie() > 0) {
-                player.setVieGuerrier(player.getVieGuerrier() - ennemi.getPointAttaque());
+    public void faireLeCombat(Personnage player, Plateau plateau){
+        while (getPointDeVie()>0) {
+            setPointDeVie(getPointDeVie() - player.getForceGuerrier());
+            System.out.println("Sa vie : " + getPointDeVie());
+            if (getPointDeVie() > 0) {
+                player.setVieGuerrier(player.getVieGuerrier() - getPointAttaque());
                 System.out.println("Ta vie : " + player.getVieGuerrier());
             }
             if (player.getVieGuerrier() <= 0) {
@@ -43,7 +42,9 @@ public class CaseEnnemi {
                 System.exit(0);
             }
         }
+        imgVictoireCombat();
     }
+
 
     /**
      * Affiche "Game Over"

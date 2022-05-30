@@ -1,7 +1,7 @@
-public abstract class Des {
-
-    public abstract int lancerD();
-
-
-
+public interface Des {
+    /**
+     * Méthode interface pour lancer les dés
+     * @return
+     */
+    int lancerD();
 }

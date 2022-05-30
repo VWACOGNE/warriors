@@ -1,4 +1,4 @@
-public class Gobelin extends Ennemi {
+public class Gobelin extends CaseEnnemi {
 
     public Gobelin() {
         setPointAttaque(1);

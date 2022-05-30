@@ -1,4 +1,4 @@
-public class Sorcier extends Ennemi {
+public class Sorcier extends CaseEnnemi {
 
     public Sorcier() {
         setPointAttaque(2);

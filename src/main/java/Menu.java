@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class Menu {
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Plateau P = null;
         Bdd bdd = new Bdd();
         List<Personnage> listPersoSauve = bdd.recupererUtilisateurs();
@@ -109,7 +109,7 @@ public class Menu {
      *
      * @return le nom choisi sous forme de String
      */
-    static String whatIsYourName() {
+    static String choixDuNom() {
         String name;
         Scanner clavierName = new Scanner(System.in);
         System.out.print("____________________Quel est ton nom (stop pour quitter le jeu) :");
@@ -128,7 +128,7 @@ public class Menu {
     static Guerrier CreateGuerrier() {
         String nomGuerrier;
         System.out.println("Tu as choisi de rejoindre nos rangs");
-        nomGuerrier = whatIsYourName();
+        nomGuerrier = choixDuNom();
         Guerrier G = new Guerrier(nomGuerrier, 5, 5, 10, 10);
         return G;
     }
@@ -141,7 +141,7 @@ public class Menu {
     static Magicien CreateMagicien() {
         String nomMagicien;
         System.out.println("Tu as choisi de rejoindre le clan des magiciens");
-        nomMagicien = whatIsYourName();
+        nomMagicien = choixDuNom();
         Magicien G = new Magicien(nomMagicien, 3, 8, 6, 15);
         return G;
     }
@@ -166,9 +166,7 @@ public class Menu {
      *
      * @return un integer qui contient le resultat du lancé de dé
      */
-    public static int lancerD() {
-        return (int) (Math.random() * 5) + 1;
-    }
+
 
     static void imgVictoire() {
         System.out.print("                                  ___________\n" +

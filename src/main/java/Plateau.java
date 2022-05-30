@@ -15,7 +15,7 @@ public class Plateau {
     enum Cases {
         VIDE, MASSUE, EPEE, ECLAIR, BOULE_FEU, PETITE_POTION, GRANDE_POTION, GOBELIN, SORCIER, DRAGON
     }
-    private int cheat[] = {5,2,3,2,1,6,5,3,4,1,2,5,3,5,3,5,2,1,3,1,2};
+
 
 
     /**
@@ -56,33 +56,27 @@ public class Plateau {
     /**
      * Méthode qui permet d'alimenter une variable qui servira a la navigation dans le tableau jeu
      */
-    public void avancementPlateau(Personnage player, Bdd bdd, Des de) {
+    public void avancementPlateau(Personnage player, Bdd bdd, Des de) throws Exception {
         String debutLancement;
         while (getPosition() < 63) {
             debutLancement = Menu.choixClavier("Taper la lettre l pour lancer le dé (stop pour quitter le jeu) :");
-            try {
+
                 if (debutLancement.equals("l")) {
                     int result = this.getPosition() + de.lancerD();
+
+                    try {
                     setPosition(result);
+                    }catch (DepassementPlateauException e) {
+                        System.out.println("je suis dans le catch");
+                        break;
+                    }
+
                     System.out.println("__________Votre position est maintenant sur la case : " + (position + 1));
-
-                    if (tableau[getPosition()] == Cases.DRAGON) {
-                        imgDragon();
-                        veuxTuCombattre();
-                    }
-                    if (tableau[getPosition()] == Cases.SORCIER) {
-                        imgSorcier();
-                        veuxTuCombattre();
-                    }
-                    if (tableau[getPosition()] == Cases.GOBELIN) {
-                        imgGobelin();
-                        veuxTuCombattre();
-                    }
-
                     realisationDeLevenement(getPosition(), player);
                     tableau[getPosition()] = Cases.VIDE;
                     System.out.println("\nRappel de tes parametres :");
                     System.out.println(player);
+
                 } else if (debutLancement.equals("stop")) {
                     String veuxTuSauvegarder = Menu.choixClavier("Veux-tu sauvegarder ta partie ? (tape: o pour oui, n pour non)");
                     while (!veuxTuSauvegarder.equals("o") && (!veuxTuSauvegarder.equals("n"))) {
@@ -94,9 +88,6 @@ public class Plateau {
                     }
 
                 }
-            } catch (Exception e) {
-                setPosition(63);
-            }
         }
     }
 
@@ -111,43 +102,40 @@ public class Plateau {
             System.out.println("\n____________________Tu es sur une case vide");
         } else if (tableau[position] == Cases.PETITE_POTION) {
             System.out.println("\n____________________Tu es sur une case petite potion");
-            CasePotion p = new CasePotion();
-            p.casePotion(player, Cases.PETITE_POTION);
+            new CasePetitePotion().utiliser(player);
         } else if (tableau[position] == Cases.GRANDE_POTION) {
             System.out.println("\n____________________Tu es sur une case grande potion");
-            CasePotion p = new CasePotion();
-            p.casePotion(player, Cases.GRANDE_POTION);
+            new CaseGrandePotion().utiliser(player);
         } else if (tableau[position] == Cases.MASSUE) {
             System.out.println("\n____________________Tu es sur une case massue");
-            CaseEquipement e = new CaseEquipement();
-            e.caseEquipement(player, Cases.MASSUE);
+            new CaseMassue().utiliser(player);
         } else if (tableau[position] == Cases.EPEE) {
             System.out.println("\n____________________Tu es sur une case epee");
-            CaseEquipement e = new CaseEquipement();
-            e.caseEquipement(player, Cases.EPEE);
+            new CaseEpee().utiliser(player);
         } else if (tableau[position] == Cases.ECLAIR) {
             System.out.println("\n____________________Tu es sur une case eclair");
-            CaseEquipement e = new CaseEquipement();
-            e.caseEquipement(player, Cases.ECLAIR);
+            new CaseEclair().utiliser(player);
         } else if (tableau[position] == Cases.BOULE_FEU) {
             System.out.println("\n____________________Tu es sur une case boule de feu");
-            CaseEquipement e = new CaseEquipement();
-            e.caseEquipement(player, Cases.BOULE_FEU);
+            new CaseBouleDeFeu().utiliser(player);
         } else if (tableau[position] == Cases.GOBELIN) {
-            CaseEnnemi c = new CaseEnnemi(player, Cases.GOBELIN, this);
+            imgGobelin();
+            veuxTuCombattre(player, "gobelin");
         } else if (tableau[position] == Cases.SORCIER) {
-            CaseEnnemi c = new CaseEnnemi(player, Cases.SORCIER, this);
+            imgSorcier();
+            veuxTuCombattre(player, "sorcier");
         } else if (tableau[position] == Cases.DRAGON) {
-            CaseEnnemi c = new CaseEnnemi(player, Cases.DRAGON, this);
-        } else {
-            throw new Exception("error");
+            imgDragon();
+            veuxTuCombattre(player, "dragon");
         }
     }
+
+
 
     /**
      * Fonction pour poser la question si l'on veut combattre ou non
      */
-    public void veuxTuCombattre() {
+    public void veuxTuCombattre(Personnage player, String ennemi) throws Exception {
         String choixDuHeroe;
         choixDuHeroe = Menu.choixClavier("Veux-tu combattre ? (o pour oui n pour non)");
         while (!choixDuHeroe.equals("n") && (!choixDuHeroe.equals("o"))) {
@@ -157,10 +145,23 @@ public class Plateau {
             int nombreCaseReculer = (int) (Math.random() * 6 + 1);
             setPosition(getPosition() - nombreCaseReculer);
             if (getPosition() < 0) {
-                setPosition(1);
+                setPosition(0);
+
             }
             System.out.println("__________Vous avez reculé sur la case : " + (position + 1));
+            realisationDeLevenement(getPosition(),player);
+        }else {
+            if (ennemi.equals("gobelin")){
+                new Gobelin().faireLeCombat(player, this);
+            }
+            if (ennemi.equals("sorcier")){
+                new Sorcier().faireLeCombat(player, this);
+            }
+            if (ennemi.equals("dragon")){
+                new Dragon().faireLeCombat(player, this);
+            }
         }
+
     }
 
     /**
@@ -238,8 +239,12 @@ public class Plateau {
         return position;
     }
 
-    public void setPosition(int position) {
+    public void setPosition(int position) throws DepassementPlateauException {
         this.position = position;
+        if (this.position >= tableau.length){
+            this.position = 63;
+            throw new DepassementPlateauException();
+        }
     }
 
     public Cases[] getTableau() {
